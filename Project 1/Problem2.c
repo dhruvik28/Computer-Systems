@@ -52,7 +52,7 @@ void createTree(struct tree_node* ptr){
 
 			return createTree(ptr->next);
 
-			exit(1);			
+			//exit(1);			
 		}else {
 
 			//while((wpid2 = wait(&status2)) > 0);
@@ -78,7 +78,7 @@ void createTree(struct tree_node* ptr){
 
 			return createTree(ptr->next);
 
-			exit(0);			
+			//exit(0);			
 		}else{
 
 			while((wpid3 = wait(&status3)) > 0);
@@ -107,10 +107,9 @@ void createTree(struct tree_node* ptr){
 			current->left = node;
 			current->nodeName = strdup(ptr->nodeNameLeft);
 
-			sleep(5);
 			return createTree(ptr->next);
 
-			exit(0);
+			//exit(0);
 
 		}else if(pid1 > 0){
 
