@@ -27,7 +27,16 @@ void createTree(struct tree_node* ptr){
 	struct tree_node *current = malloc(sizeof(struct tree_node));
 	//ptr = malloc(sizeof(struct tree_node));
 
+
 	current = root;
+
+	// if(ptr->nodeNameLeft == NULL || strcmp(ptr->children_no,"0") == 0){
+	// 	return;
+	// }	
+
+	// if(ptr->nodeNameLeft == NULL && ptr->nodeNameRight == NULL){
+	// 	return;
+	// }
 
 	if(strcmp(ptr->children_no, "2") == 0){
 
@@ -35,7 +44,9 @@ void createTree(struct tree_node* ptr){
 		pid_t wpid2;
 		int status2 = 0;
 
-		if(pid2 == 0){				
+		if(pid2 == 0){		
+	
+			//printf("First fork in child==2\n");		
 			printf("Node %s: Child: %d, Parent: %d\n", ptr->nodeNameLeft, getpid(), getppid());
 			struct tree_node* node = malloc(sizeof(struct tree_node));
 			node->left = NULL;
@@ -48,14 +59,12 @@ void createTree(struct tree_node* ptr){
 			current->left = node;
 			current->nodeName = strdup(ptr->nodeNameLeft);
 
-			sleep(5);
-
 			return createTree(ptr->next);
 
-			//exit(1);			
+			exit(1);			
 		}else {
 
-			//while((wpid2 = wait(&status2)) > 0);
+			while((wpid2 = wait(&status2)) > 0);
 		}
 
 		pid_t pid3 = fork();
@@ -63,6 +72,8 @@ void createTree(struct tree_node* ptr){
 		int status3 = 0;
 		if(pid3 == 0){
 			sleep(1);
+
+			//printf("Second fork in child ==2\n");
 
 			printf("Node %s: Child: %d, Parent: %d\n", ptr->nodeNameRight, getpid(), getppid());
 			struct tree_node* node1 = malloc(sizeof(struct tree_node));
@@ -76,9 +87,13 @@ void createTree(struct tree_node* ptr){
 			current->right = node1;
 			current->nodeName = strdup(ptr->nodeNameRight);
 
+			if(strcmp(root->nodeNameRight, ptr->nodeNameRight) == 0){
+				return;
+			}			
+
 			return createTree(ptr->next);
 
-			//exit(0);			
+			exit(1);			
 		}else{
 
 			while((wpid3 = wait(&status3)) > 0);
@@ -93,6 +108,8 @@ void createTree(struct tree_node* ptr){
 		pid_t wpid1;
 		int status1 = 0;
 		if(pid1 == 0){
+
+			//printf("fork in child ==1\n");
 
 			printf("Node %s: Child: %d, Parent: %d\n", ptr->nodeNameLeft, getpid(), getppid());
 
@@ -109,7 +126,7 @@ void createTree(struct tree_node* ptr){
 
 			return createTree(ptr->next);
 
-			//exit(0);
+			exit(1);
 
 		}else if(pid1 > 0){
 
@@ -118,9 +135,7 @@ void createTree(struct tree_node* ptr){
 		}
 	}
 
-	if(strcmp(current->children_no,"0") == 0){
-		return;
-	}
+
 
 
 }
@@ -146,10 +161,13 @@ void read_tree_file(const char* filename){
 
 	token = strtok(NULL, "\r");
 	root->nodeNameRight = strdup(token);
+
+	root->line = strdup(" ");
 	//root->left = NULL;
 	//root->right = NULL;
 
 	current = root;
+	
 
 	while(fgets(buffer, 10, file)){
 		if(current != NULL){
@@ -161,7 +179,7 @@ void read_tree_file(const char* filename){
 		current->next = malloc(sizeof(struct tree_node));
 		current = current->next;
 
-		token = strtok(buffer, " ");
+		char *token = strtok(buffer, " ");
 		current->nodeName = strdup(token);
 
 		token = strtok(NULL, " ");
@@ -182,6 +200,7 @@ void read_tree_file(const char* filename){
 		// token = strtok(NULL, "\r");
 		//current->line = strdup(token);
 		current->next = NULL;
+
 	}
 
 	current = root;
@@ -198,22 +217,14 @@ int main(){
 	//createTree('A', 2, 'B', 'C');
 	//createTree('B', 1, 'D', '-');
 
-	printf("Root: %d\n", getpid());
+	//printf("Root: %d\n", getpid());
 	fflush(stdout);
 
 	read_tree_file("Input_Problem2.txt");
 
+	printf("Node: %s, I am the Godfather with pid of %d\n", root->nodeName, getpid());
+
 	createTree(root);
 
-	// printf("%s\n", root->nodeNameLeft);
-	// printf("%s\n", root->nodeNameRight);
-
-	//createTree(root, "2", "B", "C");
-	//createTree(root, 1, "D", "-");
-
-	//sleep(3);
-	//printf("%s\n", root->nodeNameLeft);
-
-	//getchar();
-	return;
+	return 0;
 }
