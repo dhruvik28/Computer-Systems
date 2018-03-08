@@ -14,7 +14,6 @@ struct tree_node{
     char* nodeName;
 
    struct tree_node* next;
-   char* line;
 };
 
 void createTree(struct tree_node* ptr);
@@ -163,7 +162,6 @@ void read_tree_file(const char* filename){
 	token = strtok(NULL, "\r");
 	root->nodeNameRight = strdup(token);
 
-	root->line = strdup(" ");
 	//root->left = NULL;
 	//root->right = NULL;
 
@@ -193,18 +191,16 @@ void read_tree_file(const char* filename){
 			token = strtok(NULL, "\r");
 			current->nodeNameRight = strdup(token);
 
-			current->line = NULL;
 		}else if(strcmp(current->children_no, "1") == 0){
 			token = strtok(NULL, "\r");
 			current->nodeNameLeft = strdup(token);
 
-			current->line = NULL;
 		}else if(strcmp(current->children_no, "0\r\n") == 0){
-			current->line = NULL;
+			current->children_no = strdup("0");
 		}
 
 		// token = strtok(NULL, "\r");
-		//current->line = strdup(token);
+
 		current->next = NULL;
 
 	}
