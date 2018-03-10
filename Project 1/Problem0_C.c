@@ -38,82 +38,32 @@ int main(){
         fscanf(file1, "%d", &arrNum[i]);
     }
     
-    if(size == 1){
-        printf("Max = %d\n", arrNum[0]);
-        printf("Min = %d\n", arrNum[0]);
-        printf("Sum = %d\n", arrNum[0]);
-        return 0;
+    if(arrNum[0] > arrNum[1]){
+        max = arrNum[0];
+        min = arrNum[1];
+    }else{
+        max = arrNum[1];
+        min = arrNum[0];
     }
     
-    int fd1[2];
-    pipe(fd1);
-    
-    pid_t pid2 = fork();
-    if(pid2 == 0){
-        close(fd1[0]);
-
-        for(i = 0; i < size; i++){
-            sum += arrNum[i];
-        }
-        printf("Hi I am Process 2 and my pid is %d. My Parent's pid is %d\n",getpid(),getppid());
-        //printf("sum=%d\n", sum);
-        write(fd1[1], &sum, sizeof(sum));
-        close(fd1[1]);
-        exit(0);
-    }
-    else{
-        close(fd1[1]);
-        read(fd1[0], &sum, sizeof(sum));
-        int status;
-        waitpid(pid2, &status, NULL);
-        close(fd1[0]);
-    }
-  //  printf("Hi I am Process 1 and my pid is %d. I am the Parent.\n", getpid());
-    
-    pid_t pid3 = fork();
-    if (pid3 == 0){
-        if(arrNum[0] > arrNum[1]){
-            max = arrNum[0];
-            min = arrNum[1];
-        }else{
-            max = arrNum[1];
-            min = arrNum[0];
-        }
-        printf("Hi I am Process 3 and my pid is %d. My Parent's pid is %d\n", getpid(), getppid());
+    for(i = 0; i < size; i++){
+        sum += arrNum[i];
         
-        pid_t pid4 = fork();
-        if(pid4 == 0){
-            printf("Hi I am Process 4 and my pid is %d. My Parent's pid is %d\n", getpid(), getppid());
-            for(i = 0; i < size; i++){
-                
-                if(max < arrNum[i]){
-                    max = arrNum[i];
-                }
-            }
-            printf("Max=%d\n", max);
-            exit(0);
-            
-        }else{
-            for(i = 0; i < size; i++){
-                
-                if(min > arrNum[i]){
-                    min = arrNum[i];
-                }
-            }
-            int status;
-            waitpid(pid4, &status, NULL);
-            printf("Min=%d\n", min);
+        if(max < arrNum[i]){
+            max = arrNum[i];
         }
-        exit(0);
-    }
-    else {
         
-        int status1;
-        waitpid(pid3, &status1, NULL);
+        if(min > arrNum[i]){
+            min = arrNum[i];
+        }
     }
-    printf("Sum=%d\n", sum);
+    
+    
+    printf("max=%d\n", max);
+    printf("min=%d\n", min);
+    printf("sum=%d\n", sum);
     
     fclose (file1);
-
+    
     return 0;
 }
