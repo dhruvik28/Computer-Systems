@@ -114,4 +114,6 @@ int main(){
     printf("Sum=%d\n", sum);
     
     fclose (file1);
+    
+    return 0;
 }
