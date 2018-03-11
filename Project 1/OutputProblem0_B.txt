@@ -1,0 +1,8 @@
+Hi I am Process 2 and my pid is 656. My Parent's pid is 655
+
+Hi I am Process 1 and my pid is 655. I am the Parent.
+
+sum=350
+max=111
+
+min=20

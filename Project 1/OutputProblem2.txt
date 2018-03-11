@@ -1,0 +1,8 @@
+Root: A: Pid: 3597
+
+Node B: Pid: 3600, ParentPid: 3597
+
+Node D: Pid: 3601, ParentPid: 3600
+
+
+Node C: Pid: 3602, ParentPid: 3597

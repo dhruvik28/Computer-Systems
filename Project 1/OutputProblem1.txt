@@ -1,0 +1,11 @@
+The root is: 24024
+
+Process B with pid: 24027 and parent pid 24024
+
+Process A with pid: 24024 and is the parent
+
+Process D with pid: 24028 and parent pid 24024
+
+Process C with pid: 24024 and parent pid 14164
+
+A = 5, B = 9, C = 8, D = 12.

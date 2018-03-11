@@ -1,0 +1,13 @@
+Hi I am Process 1 and my pid is 9380. I am the Parent.
+
+Hi I am Process 2 and my pid is 20896. My Parent's pid is 20895
+
+Hi I am Process 3 and my pid is 20897. My Parent's pid is 20895
+
+Hi I am Process 4 and my pid is 20898. My Parent's pid is 20897
+
+Max=111
+
+Min=20
+
+Sum=350

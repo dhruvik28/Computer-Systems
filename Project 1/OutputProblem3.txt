@@ -1,0 +1,15 @@
+Root: A: Pid: 32498
+
+Node B: Pid: 32499, ParentPid: 32498
+
+Child with PID = 32499 has been stopped by a signal, signo = 19
+Node D: Pid: 32500, ParentPid: 32499
+
+Child with PID = 32500 has been stopped by a signal, signo = 19
+Child with PID = 32500 terminated normally, exit status = 0
+Child with PID = 32499 terminated normally, exit status = 0
+Node C: Pid: 32501, ParentPid: 32498
+
+Child with PID = 32501 has been stopped by a signal, signo = 19
+waitpid: No child processes
+Child with PID = 32501 terminated normally, exit status = 1
