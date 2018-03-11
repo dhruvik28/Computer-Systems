@@ -6,11 +6,13 @@
 #include <sys/wait.h>
 
 struct tree_node{
-    struct tree_node* left;
     struct tree_node* right;
     char* operand;
     int integerLeft;
     int integerRight;
+    int result;
+
+    int pid;
 };
 
 struct linkedList{
@@ -27,103 +29,8 @@ int calculate_tree(struct linkedList* head);
 struct tree_node *ptr = NULL;
 struct linkedList *head = NULL;
 
-// void createTree(struct tree_node* ptr){
+int root;
 
-// 	struct tree_node *current = malloc(sizeof(struct tree_node));
-// 	//ptr = malloc(sizeof(struct tree_node));
-
-
-// 	current = root;
-
-// 	if(strcmp(ptr->children_no, "2") == 0){
-
-// 		pid_t pid2 = fork();
-// 		pid_t wpid2;
-// 		int status2 = 0;
-
-// 		if(pid2 == 0){		
-
-// 			printf("Node %s: Pid: %d, ParentPid: %d\n", ptr->nodeNameLeft, getpid(), getppid());
-
-
-// 			struct tree_node* node = malloc(sizeof(struct tree_node));
-
-// 			node->left = NULL;
-// 			node->right = NULL;
-
-// 			while((current->left) != NULL){
-// 				current = current->left;
-// 			}
-
-// 			current->left = node;
-
-// 			node->nodeName = strdup(ptr->nodeNameLeft);
-
-// 			return createTree(ptr->next);
-
-// 		}else {
-
-// 			while((wpid2 = wait(&status2)) > 0);
-// 		}
-
-// 		pid_t pid3 = fork();
-// 		pid_t wpid3;
-// 		int status3 = 0;
-// 		if(pid3 == 0){
-
-// 			printf("Node %s: Pid: %d, ParentPid: %d\n", ptr->nodeNameRight, getpid(), getppid());
-
-// 			struct tree_node* node1 = malloc(sizeof(struct tree_node));
-// 			node1->left = NULL;
-// 			node1->right = NULL;
-
-// 			while((current->right) != NULL){
-// 				current = current->right;
-// 			}
-
-// 			current->right = node1;
-// 			current->nodeName = strdup(ptr->nodeNameRight);
-
-// 			if(strcmp(root->nodeNameRight, ptr->nodeNameRight) == 0){
-// 				return;
-// 			}			
-
-// 			return createTree(ptr->next);
-
-// 		}else{
-// 			while((wpid3 = wait(&status3)) > 0);
-// 		}
-		
-// 	}
-
-// 	if(strcmp(ptr->children_no,"1") == 0){
-
-// 		pid_t pid1 = fork();
-// 		pid_t wpid1;
-// 		int status1 = 0;
-// 		if(pid1 == 0){
-
-// 			printf("Node %s: Pid: %d, ParentPid: %d\n", ptr->nodeNameLeft, getpid(), getppid());
-
-// 			struct tree_node* node = malloc(sizeof(struct tree_node));
-// 			node->left = NULL;
-// 			node->right = NULL;
-	
-// 			while((current->left) != NULL){
-// 				current = current->left;
-// 			}			
-
-// 			current->left = node;
-// 			current->nodeName = strdup(ptr->nodeNameLeft);
-
-// 			return createTree(ptr->next);
-
-// 		}else if(pid1 > 0){
-
-// 			while((wpid1 = wait(&status1)) > 0);
-// 		}
-// 	}
-// }
 
 void read_tree_file(const char* filename){
 
@@ -192,7 +99,7 @@ void read_tree_file(const char* filename){
 
 int calculate_tree(struct linkedList *head){
 
-	struct tree_node* ptr = malloc(sizeof(struct tree_node));
+	ptr = malloc(sizeof(struct tree_node));
 
 	//ptr->right = malloc(sizeof(struct tree_node));
 	//ptr->left = malloc(sizeof(struct tree_node));
@@ -211,6 +118,8 @@ int calculate_tree(struct linkedList *head){
 	int fd4[2];
 	int fd5[2];
 	int fd6[2];
+	int fd7[2];
+	int fd8[2];
 
 	pipe(fd1);
 	pipe(fd2);
@@ -218,6 +127,8 @@ int calculate_tree(struct linkedList *head){
 	pipe(fd4);
 	pipe(fd5);
 	pipe(fd6);
+	pipe(fd7);
+	pipe(fd8);
 
 	pid_t pid = fork();
 	pid_t wpid;
@@ -231,6 +142,8 @@ int calculate_tree(struct linkedList *head){
 		close(fd4[0]);
 		close(fd5[0]);
 		close(fd6[0]);
+		close(fd7[0]);
+		close(fd8[0]);
 
 
 		if(ptr == NULL){
@@ -241,12 +154,12 @@ int calculate_tree(struct linkedList *head){
 		if(strcmp(token, "*") == 0 || strcmp(token, "+") == 0){
 			ptr->right->operand = strdup(token);
 			token = strtok(NULL, "\r");
-			ptr->left->integerLeft = atoi(token);
+			ptr->integerLeft = atoi(token);
 
 			write(fd1[1], ptr->right->operand, sizeof(ptr->right->operand));
 			close(fd1[1]);
 
-			write(fd2[1], &ptr->left->integerLeft, sizeof(ptr->left->integerLeft));
+			write(fd2[1], &ptr->integerLeft, sizeof(ptr->integerLeft));
 			close(fd2[1]);
 
 			ptr = ptr->right;
@@ -259,55 +172,82 @@ int calculate_tree(struct linkedList *head){
 
 			if(strcmp(ptr->operand, "*") == 0){
 
-				ptr->left->integerLeft = left;
-				ptr->right->integerRight = right;
+				ptr->integerLeft = left;
+				ptr->integerRight = right;
+				ptr->result = left*right;
+			printf("Result: %d\n", ptr->result);
 
-				write(fd3[1], &ptr->left->integerLeft, sizeof(ptr->left->integerLeft));
+
+				write(fd3[1], &ptr->integerLeft, sizeof(ptr->integerLeft));
 				close(fd3[1]);
 
-				write(fd4[1], &ptr->right->integerRight, sizeof(ptr->right->integerRight));
+				write(fd4[1], &ptr->integerRight, sizeof(ptr->integerRight));
 				close(fd4[1]);
 
-				return (left*right);
+				write(fd7[1], &ptr->result, sizeof(ptr->result));
+				close(fd7[1]);
+
+				ptr->pid = getpid();
+
+
+
+
+				//return (left*right);
 				exit(1);
 			}
 
 			if(strcmp(ptr->operand, "+") == 0){
 
-				ptr->left->integerLeft = left;
-				ptr->right->integerRight = right;
+				ptr->integerLeft = left;
+				ptr->integerRight = right;
 
-				write(fd5[1], &ptr->left->integerLeft, sizeof(ptr->left->integerLeft));
+				ptr->result = left+right;
+				printf("Result: %d\n", ptr->result);
+
+
+				write(fd5[1], &ptr->integerLeft, sizeof(ptr->integerLeft));
 				close(fd5[1]);
 
-				write(fd6[1], &ptr->right->integerRight, sizeof(ptr->right->integerRight));
+				write(fd6[1], &ptr->integerRight, sizeof(ptr->integerRight));
 				close(fd6[1]);
 
-				return (left + right);
+				write(fd8[1], &ptr->result, sizeof(ptr->result));
+				close(fd8[1]);
+
+
+				//return (left + right);
 				exit(1);
 			}
 		}
 
-	}else{
+	}else if(pid > 0){
 		while((wpid = wait(&status)) > 0);
 
 		close(fd1[1]);
 		read(fd1[0], ptr->right->operand, sizeof(ptr->right->operand));
 
 		close(fd2[1]);
-		read(fd2[0], &ptr->left->integerLeft, sizeof(ptr->left->integerLeft));
+		read(fd2[0], &ptr->integerLeft, sizeof(ptr->integerLeft));
 
 		close(fd3[1]);
-		read(fd3[0], &ptr->left->integerLeft, sizeof(ptr->left->integerLeft));
+		read(fd3[0], &ptr->integerLeft, sizeof(ptr->integerLeft));
 
 		close(fd4[1]);
-		read(fd4[0], &ptr->right->integerRight, sizeof(ptr->right->integerRight));
+		read(fd4[0], &ptr->integerRight, sizeof(ptr->integerRight));
 
 		close(fd5[1]);
-		read(fd5[0], &ptr->left->integerLeft, sizeof(ptr->left->integerLeft));
+		read(fd5[0], &ptr->integerLeft, sizeof(ptr->integerLeft));
 
 		close(fd6[1]);
-		read(fd6[0], &ptr->right->integerRight, sizeof(ptr->right->integerRight));
+		read(fd6[0], &ptr->integerRight, sizeof(ptr->integerRight));
+
+		close(fd7[1]);
+		read(fd7[0], &ptr->result, sizeof(ptr->result));
+		close(fd7[0]);
+
+		close(fd8[1]);
+		read(fd8[0], &ptr->result, sizeof(ptr->result));
+		close(fd8[0]);
 
 		close(fd1[0]);
 		close(fd2[0]);
@@ -315,25 +255,73 @@ int calculate_tree(struct linkedList *head){
 		close(fd4[0]);
 		close(fd5[0]);
 		close(fd6[0]);
+	}
+
+
+	//printf("Result: %d\n", ptr->result);
+
+	// int fd0[2];
+	// pipe(fd0);
+
+	// if(root == getppid()){
+	// 	// printf("in main1: %s\n", ptr->operand);
+	// 	// printf("in main2: %d\n", ptr->integerLeft);
+	// 	// printf("in main3: %d\n", ptr->integerRight);
+	// 	// printf("in main4: %d\n", ptr->result);
+
+	// 	if(strcmp(ptr->operand, "+") == 0){
+	// 		ptr->result = ptr->integerRight + ptr->integerLeft;
+	// 		printf("Result: %d\n", ptr->result);
+
+			
+
+	// 		close(fd0[0]);
+	// 		write(fd0[1], &ptr->result, sizeof(ptr->result));
+	// 		close(fd0[1]);
+
+	// 		return calculate_tree(head);
+
+	// 		exit(1);
+	// 	}
+	// }
+
+	// printf("def out: %d\n", ptr->result);
+
+
+	// 	close(fd0[1]);
+	// 	read(fd0[0], &ptr->result, sizeof(ptr->result));
+	// 	close(fd0[0]);
+
+	// printf("def out: %d\n", ptr->result);
+
+	// if(root == getpid()){
+	// 	// printf("outside1: %s\n", ptr->operand);
+	// 	// printf("outside2: %d\n", ptr->integerLeft);
+	// 	// printf("outside3: %d\n", ptr->integerRight);
+	// 	// printf("outside4: %d\n", ptr->result);
+
+	// 	printf("comes here: %d\n", ptr->result);
+
+	// 	printf("also comes here: %d\n", ptr->integerLeft);
 	
 
+	// 	//printf("outside41: %d\n", ptr->right->result);
 
-	}
+	// }
+
+	// // while(root != getpid()){
+	// // 	if(strcmp(ptr->operand, "*") == 0){
+	// // 		int answer = ptr->integerLeft*ptr->result;
+
+	// // 	}	
+	// // }
+
+
+
 
 
 }
 
-// void print_tree(struct tree_node* root){
-
-// 	if(root == NULL){
-// 		return;
-// 	}
-
-// 	printf("Node: %s, pid: %d, ppid: %d\n", root->nodeName, root->pid, root->ppid);
-// 	print_tree(root->left);
-// 	print_tree(root->right);
-
-// }
 
 int main(){
 
@@ -345,9 +333,63 @@ int main(){
 
 	//createTree(root);
 
+	root = getpid();
+
 	int result = calculate_tree(head);
 
-	//printf("%d\n", result);
+	// printf("%d\n", result);
 
-	return 0;
+	int fd10[2];
+	pipe(fd10);
+
+	pid_t wpid;
+	int status;
+
+	if(root != getpid()){
+
+		close(fd10[0]);
+		write(fd10[1], &ptr->result, sizeof(ptr->result));
+		close(fd10[1]);
+
+	}
+
+	if(root == getpid()){
+		while((wpid = wait(&status)) > 0);
+	}
+
+	close(fd10[1]);
+	read(fd10[0], &ptr->result, sizeof(ptr->result));
+	close(fd10[0]);
+
+
+	return;
+
+
+	// if(root != getpid()){
+	// 	printf("in main1: %s\n", ptr->operand);
+	// 	printf("in main2: %d\n", ptr->integerLeft);
+	// 	printf("in main3: %d\n", ptr->integerRight);
+	// 	printf("in main4: %d\n", ptr->result);
+
+	// 	if(strcmp(ptr->operand, "+") == 0){
+	// 		ptr->result = ptr->integerRight + ptr->integerLeft;
+
+	// 		printf("if +: %d\n", ptr->result);
+	// 	}
+	// 	exit(1);
+	// }
+
+
+	// printf("in main7: %s\n", ptr->operand);
+
+	// printf("in main8: %s\n", ptr->right->operand);
+
+	// printf("in main9: %d\n", ptr->right->integerRight);
+
+
+	
+
+
+
+	//printf("%d\n", result);
 }
