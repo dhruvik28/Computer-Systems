@@ -9,7 +9,7 @@ int main(void) {
     int sum=0;
     int i;
     
-    FILE *file1 = fopen("Input_Problem0_A.txt", "r");
+    FILE *file1 = fopen("Input_Problem0.txt", "r");
     
     int size = 1;
     int ch = 0;
