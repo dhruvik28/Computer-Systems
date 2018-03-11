@@ -6,16 +6,68 @@
 #include <sys/wait.h>
 
 int main(void) {
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    int d = 0;
+    
     printf("The root is: %d\n", getpid());
-    pid_t pid1 = fork() && (fork() || fork());
-    if (pid1 > 0)
+    
+    int fd1[2],status;
+    pipe(fd1);
+    
+    pid_t pid1 = fork();
+    if (pid1 == 0)
     {
-        //        fork() && fork();
-        //        printf("C's pid is: %d      C's Parents pid is: %d\n", getpid(), getppid());
-        //        printf("%d\n%d\n", getpid(), getppid());
+        close(fd1[0]);
+
+        b = 9;
+        printf("Process B with pid: %d and parent pid %d\n", getpid(), getppid());
+        write(fd1[1], &b, sizeof(b));
+        close(fd1[1]);
+        exit(0);
+        
+           }
+    else {
+        waitpid(pid1, &status, status);
+
+        close(fd1[1]);
+        read(fd1[0], &b, sizeof(b));
+        a = 5;
+        printf("Process A with pid: %d and is the parent\n", getpid());
+        close(fd1[0]);
+        
     }
     
-    printf("child pid %d    parent pid %d\n", getpid(), getppid());
+    int fd2[2];
+    pipe(fd2);
+    
+    pid_t pid2 = fork();
+    if (pid2 == 0)
+    {
+        close(fd2[0]);
+
+        d = 12;
+        printf("Process D with pid: %d and parent pid %d\n", getpid(), getppid());
+        write(fd2[1], &d, sizeof(d));
+        close(fd2[1]);
+        exit(0);
+   
+    }
+    else {
+        waitpid(pid2, &status, status);
+        close(fd2[1]);
+        read(fd2[0], &d, sizeof(d));
+        c = 8;
+        printf("Process C with pid: %d and parent pid %d\n", getpid(), getppid());
+        close(fd2[0]);
+
+    }
+    
+    printf("A = %d, B = %d, C = %d, D = %d.\n", a,b,c,d);
+
+    
+   // printf("child pid %d    parent pid %d\n", getpid(), getppid());
     
     fflush(stdout);
     
