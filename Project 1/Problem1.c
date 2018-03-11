@@ -20,17 +20,17 @@ int main(void) {
     if (pid1 == 0)
     {
         close(fd1[0]);
-
+        
         b = 9;
-        printf("Process B with pid: %d and parent pid %d\n", getpid(), getppid());
+        printf("Process C with pid: %d and parent pid %d\n", getpid(), getppid());
         write(fd1[1], &b, sizeof(b));
         close(fd1[1]);
         exit(0);
         
-           }
+    }
     else {
         waitpid(pid1, &status, status);
-
+        
         close(fd1[1]);
         read(fd1[0], &b, sizeof(b));
         a = 5;
@@ -46,28 +46,35 @@ int main(void) {
     if (pid2 == 0)
     {
         close(fd2[0]);
-
+        
         d = 12;
-        printf("Process D with pid: %d and parent pid %d\n", getpid(), getppid());
+        printf("Process B with pid: %d and parent pid %d\n", getpid(), getppid());
+        pid_t pid3 = fork();
+        if (pid3 == 0){
+            printf("Process D with pid: %d and parent pid %d\n", getpid(), getppid());
+            exit(0);
+        }
+        
         write(fd2[1], &d, sizeof(d));
         close(fd2[1]);
+
+
         exit(0);
-   
+        
     }
     else {
         waitpid(pid2, &status, status);
         close(fd2[1]);
         read(fd2[0], &d, sizeof(d));
         c = 8;
-        printf("Process C with pid: %d and parent pid %d\n", getpid(), getppid());
         close(fd2[0]);
-
+        
     }
     
     printf("A = %d, B = %d, C = %d, D = %d.\n", a,b,c,d);
-
     
-   // printf("child pid %d    parent pid %d\n", getpid(), getppid());
+    
+    // printf("child pid %d    parent pid %d\n", getpid(), getppid());
     
     fflush(stdout);
     
