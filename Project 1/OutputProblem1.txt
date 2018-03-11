@@ -1,11 +1,13 @@
-The root is: 24024
+The root is: 78054
 
-Process B with pid: 24027 and parent pid 24024
+Process C with pid: 78057 and parent pid 78054
 
-Process A with pid: 24024 and is the parent
+Process A with pid: 78054 and is the parent
 
-Process D with pid: 24028 and parent pid 24024
+Process B with pid: 78058 and parent pid 78054
 
-Process C with pid: 24024 and parent pid 14164
+Process D with pid: 78059 and parent pid 78058
 
 A = 5, B = 9, C = 8, D = 12.
+
+Program ended with exit code: 0
