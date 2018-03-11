@@ -1,4 +1,4 @@
-all: Problem0_A Problem0_B Problem0_C Problem2  Problem4
+all: Problem0_A Problem0_B Problem0_C Problem2  Problem3 Problem4
 
 Problem0_A: Problem0_A.c
 	gcc Problem0_A.c -g -o Problem0_A
