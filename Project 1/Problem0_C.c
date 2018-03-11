@@ -65,7 +65,7 @@ int main(){
         close(fd1[1]);
         read(fd1[0], &sum, sizeof(sum));
         int status;
-        waitpid(pid2, &status, NULL);
+        waitpid(pid2, &status, 0);
         close(fd1[0]);
     }
   //  printf("Hi I am Process 1 and my pid is %d. I am the Parent.\n", getpid());
@@ -101,7 +101,7 @@ int main(){
                 }
             }
             int status;
-            waitpid(pid4, &status, NULL);
+            waitpid(pid4, &status, 0);
             printf("Min=%d\n", min);
         }
         exit(0);
@@ -109,7 +109,7 @@ int main(){
     else {
         
         int status1;
-        waitpid(pid3, &status1, NULL);
+        waitpid(pid3, &status1, 0);
     }
     printf("Sum=%d\n", sum);
     
