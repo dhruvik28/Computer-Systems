@@ -1,0 +1,3 @@
+int currentSeconds(){
+  return clock();
+}
