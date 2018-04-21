@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-g
 
-DEMO=mtsort
+DEMO= mtsort
 
 default: help
 

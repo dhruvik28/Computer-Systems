@@ -1,26 +1,34 @@
-//mypthread.c
-//Christina Segerholm cms549
-//Athira Haridas ah671
-#ifndef H_MYPTHREAD
-#define H_MYPTHREAD
-
+//mypthread.h
 #include <ucontext.h>
 #include <stdio.h>      
 #include <stdlib.h>
-#include <errno.h>
+#include <errno.h> 
 
-struct threadNode; //defined in .c class
+enum state
+{
+	RUNNING, BLOCKED, DEAD
+};
 
-typedef struct{
-    //Thread ID
-    short tid;
-    //Pointer to thread node 
-    struct threadNode * mynode;
-} mypthread_t;
+typedef struct mypthread_t
+{
+	struct mypthread_t* next_thread;  
+	short tid;
+	ucontext_t *context;
+	enum state status; 
+	short join;
+}mypthread_t; 
 
-typedef struct {
-    //Not specified to implement in project instructions but decided to do it anyway.
-} mypthread_attr_t;
+typedef struct linked_list
+{
+	mypthread_t *head; 
+	int size; 
+}linked_list; 
+
+typedef struct mypthread_attr_t
+{
+}mypthread_attr_t; 
+
+ 
 
 // Functions
 int mypthread_create(mypthread_t *thread, const mypthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
@@ -55,4 +63,3 @@ static inline int mypthread_mutex_trylock(mypthread_mutex_t *mutex) { return 0; 
 
 static inline int mypthread_mutex_unlock(mypthread_mutex_t *mutex) { return 0; }
 
-#endif
